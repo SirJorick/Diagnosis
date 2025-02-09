@@ -1,0 +1,41 @@
+{
+  "version": "1.0",
+  "medications": {
+    "Lactase Enzyme": {
+      "Description": "This enzyme supplement helps break down lactose found in dairy products, relieving symptoms of lactose intolerance.",
+      "Product": "Lactaid (or equivalent)",
+      "Dosage": "1 tablet (approx. 60000 FCC units) before or with a dairy meal",
+      "Notes": "For larger meals or if symptoms persist, some may take 2 tablets.",
+      "Alternatives": "Lactrase. Generic lactase enzyme supplements. Lactase drops.",
+      "Frequency": null,
+      "Maximum": null
+    },
+    "Anti-Diarrheal": {
+      "Description": "This medication helps control diarrhea by slowing down intestinal movement.",
+      "Product": "Imodium (Loperamide)",
+      "Dosage": "Initial dose: 2 mg; then 1 mg after each loose stool",
+      "Maximum": "Do not exceed 8 mg in 24 hours",
+      "Notes": "Use only if diarrhea is significant.",
+      "Alternatives": "Generic loperamide brands. Pepto-Bismol (Bismuth subsalicylate) - if appropriate.",
+      "Frequency": null
+    },
+    "Anti-Gas": {
+      "Description": "This product relieves gas and bloating by helping to break up gas bubbles in the digestive tract.",
+      "Product": "Gas-X (Simethicone)",
+      "Dosage": "40 mg per dose",
+      "Frequency": "After meals and at bedtime, up to 4 times per day",
+      "Notes": "",
+      "Alternatives": "Generic simethicone products. Mylicon. Infacol.",
+      "Maximum": null
+    },
+    "Antispasmodic": {
+      "Description": "This medication is used to relieve abdominal cramps and spasms by relaxing the smooth muscles of the gastrointestinal tract.",
+      "Product": "Buscopan (Hyoscine Butylbromide)",
+      "Dosage": "10 mg per tablet",
+      "Frequency": "3-4 times per day as needed",
+      "Notes": "For abdominal cramps.",
+      "Alternatives": "Generic hyoscine butylbromide formulations. Peppermint oil capsules (natural alternative). Other antispasmodic agents like Mebeverine (if available).",
+      "Maximum": null
+    }
+  }
+}
