@@ -1,6 +1,7 @@
 import json
 import re
 import math
+import os  # For file existence checking.
 import tkinter as tk
 from tkinter import ttk, messagebox
 import numpy as np
@@ -15,10 +16,86 @@ try:
 except LookupError:
     nltk.download('stopwords')
 from nltk.corpus import stopwords
+
 stop_words = set(stopwords.words('english'))
 
 # Initialize the stemmer.
 ps = PorterStemmer()
+
+# --- Global Variable for the Generated Symptoms JSON File ---
+GENERATED_SYMPTOMS_FILE = "generated_symptoms.json"
+
+# --- New Functions for Saving/Loading Generated Symptom Data ---
+
+def save_generated_symptom_data(illness, symptoms):
+    """
+    Save (or update) a record in GENERATED_SYMPTOMS_FILE.
+
+    If a record with the same 'Illness' already exists,
+    overwrite it with the new list of symptoms. Otherwise, add a new record.
+    """
+    record = {"Illness": illness, "Symptoms": symptoms}
+    data = []
+    if os.path.exists(GENERATED_SYMPTOMS_FILE):
+        try:
+            with open(GENERATED_SYMPTOMS_FILE, "r", encoding="utf-8") as f:
+                data = json.load(f)
+        except json.JSONDecodeError:
+            data = []
+    # Check if a record for the same illness exists; if so, update it.
+    replaced = False
+    for i, rec in enumerate(data):
+        if rec.get("Illness") == illness:
+            data[i] = record
+            replaced = True
+            break
+    if not replaced:
+        data.append(record)
+    with open(GENERATED_SYMPTOMS_FILE, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=4)
+
+def load_generated_symptoms():
+    """
+    Loads any previously saved generated symptom data from the JSON file
+    and adds them to the training data.
+    """
+    if os.path.exists(GENERATED_SYMPTOMS_FILE):
+        try:
+            with open(GENERATED_SYMPTOMS_FILE, "r", encoding="utf-8") as f:
+                data = json.load(f)
+        except json.JSONDecodeError:
+            data = []
+        for record in data:
+            symptoms = record.get("Symptoms", [])
+            illness = record.get("Illness", "")
+            if symptoms and illness:
+                query_text = " ".join(symptoms).lower()
+                training_queries.append(query_text)
+                training_labels.append(illness)
+
+def update_common_symptoms():
+    """
+    Update the global common_symptoms list by merging symptoms extracted from
+    the medication data with those stored in the generated_symptoms.json file.
+    This updated list is then set as the values for the symptom combobox.
+    """
+    global common_symptoms
+    # Start with symptoms from the medication data.
+    base_symptoms = set(extract_symptoms(medication_data))
+    # Add any generated symptoms from the JSON file.
+    if os.path.exists(GENERATED_SYMPTOMS_FILE):
+        try:
+            with open(GENERATED_SYMPTOMS_FILE, "r", encoding="utf-8") as f:
+                gen_data = json.load(f)
+        except json.JSONDecodeError:
+            gen_data = []
+        for record in gen_data:
+            for symptom in record.get("Symptoms", []):
+                s = symptom.strip()
+                if s:
+                    base_symptoms.add(s)
+    common_symptoms = sorted(base_symptoms)
+    symptom_dropdown_new["values"] = common_symptoms
 
 # --- Data Loading and Utility Functions ---
 
@@ -81,8 +158,8 @@ def compute_idf(df, N):
 def compute_tfidf(tf, idf):
     """Compute the TF–IDF vector from TF and IDF."""
     tfidf = {}
-    for term, freq in tf.items():
-        tfidf[term] = freq * idf.get(term, 0)
+    for token, freq in tf.items():
+        tfidf[token] = freq * idf.get(token, 0)
     return tfidf
 
 def cosine_similarity_tfidf(vec1, vec2):
@@ -118,12 +195,12 @@ def get_stemmed_token_set(text, stemmer):
 
 # Global variables for TF–IDF and BM25
 illness_documents = {}  # illness -> document text
-doc_tf = {}             # illness -> normalized TF dictionary (stemmed)
-df = {}                 # document frequency for terms
-idf = {}                # inverse document frequency for terms
-illness_tfidf = {}      # illness -> TF–IDF vector
-doc_tf_raw = {}         # illness -> raw term frequency dictionary (stemmed)
-avg_doc_len = 0         # average document length (raw token count)
+doc_tf = {}  # illness -> normalized TF dictionary (stemmed)
+df = {}  # document frequency for terms
+idf = {}  # inverse document frequency for terms
+illness_tfidf = {}  # illness -> TF–IDF vector
+doc_tf_raw = {}  # illness -> raw term frequency dictionary (stemmed)
+avg_doc_len = 0  # average document length (raw token count)
 
 def build_tfidf_vectors():
     global illness_documents, doc_tf, df, idf, illness_tfidf, doc_tf_raw, avg_doc_len
@@ -184,10 +261,9 @@ def compute_bm25_score(illness, query_tokens, k1=1.5, b=0.75):
     return score
 
 # --- Supervised Learning: Training Data & Classifier ---
-
 # Global variables for training data and the classifier.
 training_queries = []  # List of query strings (concatenated symptoms)
-training_labels = []   # Corresponding chosen illness (string)
+training_labels = []  # Corresponding chosen illness (string)
 classifier_model = None  # The trained classifier (LogisticRegression)
 vectorizer_model = None  # The TF–IDF vectorizer for queries
 
@@ -336,11 +412,11 @@ def predict_illness_new():
       - Uses softmax with a temperature parameter to produce a balanced probability distribution.
     """
     # Tunable weight parameters.
-    alpha = 0.8         # Weight for cosine similarity.
-    beta = 0.2          # Weight for match ratio.
-    gamma = 0.3         # Weight for BM25 (after normalization) relative to the hybrid score.
+    alpha = 0.8  # Weight for cosine similarity.
+    beta = 0.2  # Weight for match ratio.
+    gamma = 0.3  # Weight for BM25 (after normalization) relative to the hybrid score.
     lambda_model = 0.3  # Weight for the classifier's probability.
-    score_scale = 100   # Overall scale for raw scores.
+    score_scale = 100  # Overall scale for raw scores.
     temperature = 10.0  # Temperature for softmax (increase to flatten the distribution).
 
     # Build query representation.
@@ -414,7 +490,6 @@ def predict_illness_new():
     for illness, score in sorted_illnesses[:10]:
         predicted_tree.insert("", tk.END, values=(illness, f"{score:.2f}%"))
 
-
 def on_predicted_tree_select(event):
     selection = predicted_tree.selection()
     if selection:
@@ -432,7 +507,13 @@ def on_predicted_tree_select(event):
             if query_text and illness_name:
                 training_queries.append(query_text)
                 training_labels.append(illness_name)
-                train_classifier_model()  # Retrain classifier with updated data.
+                train_classifier_model()  # Retrain classifier with updated data
+
+                # Save or update the generated symptom data (overwrites if the same illness exists)
+                save_generated_symptom_data(illness_name, selected_symptoms_global)
+                # Also update the combobox list with new symptoms.
+                update_common_symptoms()
+
             # Expand the tree to show the selected illness.
             for node_id, text in all_nodes:
                 if text.lower() == illness_name.lower():
@@ -468,9 +549,6 @@ def on_symptom_double_click(event):
             selected_symptoms_global.remove(symptom)
         symptoms_listbox_new.delete(index)
     predict_illness_new()
-
-# --- Supervised Model Training Function ---
-# (The train_classifier_model function above is used.)
 
 # --- GUI Setup ---
 
@@ -532,7 +610,7 @@ symptom_var_new = tk.StringVar()
 symptom_dropdown_new = ttk.Combobox(
     symptom_input_frame,
     textvariable=symptom_var_new,
-    values=[],  # To be filled
+    values=[],  # To be filled by update_common_symptoms()
     state="normal",
     width=50
 )
@@ -572,6 +650,7 @@ predict_btn.grid(row=0, column=3, padx=5, pady=5)
 # --- Load JSON Data and Build the Main Tree ---
 medication_data = load_medication_data('medication.json')
 common_symptoms = extract_symptoms(medication_data)
+# Initially set the combobox values from medication data.
 symptom_dropdown_new["values"] = common_symptoms
 print("Extracted Common Symptoms:", common_symptoms)
 
@@ -607,10 +686,14 @@ def gather_nodes(parent=""):
         all_nodes.append((item, tree.item(item, "text")))
         gather_nodes(item)
 gather_nodes()
-
 suggestion_mapping = {}
 
 # --- Build TF-IDF and BM25 Vectors for Prediction ---
 build_tfidf_vectors()
+
+# --- Load Previously Generated Symptom Data into the Training Set ---
+load_generated_symptoms()
+# Update the combobox list with any generated symptoms.
+update_common_symptoms()
 
 root.mainloop()
