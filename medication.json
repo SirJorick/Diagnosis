@@ -2,61 +2,62 @@
   "version": "1.0",
   "medications": {
     "Digestive (Lactose Intolerance)": {
-  "CategoryDescription": "Treatments for digestive issues.\n\nThis category addresses conditions such as lactose intolerance, diarrhea, and nausea.\n\nProper digestion is essential for overall health and nutrient absorption.",
-  "Symptoms": [
-    "Bloating",
-    "Gas",
-    "Diarrhea",
-    "Nausea",
-    "Abdominal pain"
-  ],
-  "Conventional": {
-    "Lactase Enzyme": {
-      "Description": "Enzyme supplement that relieves lactose intolerance symptoms.",
-      "Medicine": "Lactaid (or equivalent)",
-      "Form": "Tablet",
-      "Dosage": "1 tablet before or with dairy",
-      "Frequency": "As needed",
-      "Maximum": "2 tablets per meal",
-      "Notes": "Clinically proven to aid lactose digestion.",
-      "Alternatives": "Lactrase",
-      "Preparation": "Oral",
-      "QuantityNeeded": "1-2 tablets",
-      "AgeGroup": "All",
-      "Sex": "Both",
-      "Availability": "OTC"
+    "CategoryDescription": "This category covers treatments aimed at managing symptoms associated with lactose intolerance and related digestive disturbances. Effective management supports proper digestion and nutrient absorption.",
+    "Symptoms": [
+      "Bloating",
+      "Flatulence",
+      "Diarrhea",
+      "Nausea",
+      "Abdominal pain",
+      "Cramping"
+    ],
+    "Conventional": {
+      "Lactase Enzyme": {
+        "Description": "An enzyme supplement that breaks down lactose, reducing symptoms of lactose intolerance.",
+        "Medicine": "Lactaid (or equivalent)",
+        "Form": "Tablet",
+        "Dosage": "1 tablet before or with dairy consumption",
+        "Frequency": "As needed",
+        "Maximum": "2 tablets per meal",
+        "Notes": "Clinically proven to enhance lactose digestion.",
+        "Alternatives": "Lactrase",
+        "Preparation": "Oral",
+        "QuantityNeeded": "1-2 tablets per meal",
+        "AgeGroup": "All",
+        "Sex": "Both",
+        "Availability": "Over-the-Counter (OTC)"
+      },
+      "Anti-Diarrheal": {
+        "Description": "A medication that slows intestinal motility to help control diarrhea.",
+        "Medicine": "Imodium (Loperamide)",
+        "Form": "Tablet",
+        "Dosage": "2 mg initially; 1 mg for each subsequent loose stool",
+        "Frequency": "As needed",
+        "Maximum": "8 mg per day",
+        "Notes": "Effective for managing diarrhea symptoms.",
+        "Alternatives": "Generic Loperamide",
+        "Preparation": "Oral",
+        "QuantityNeeded": "Dosage as specified",
+        "AgeGroup": "All",
+        "Sex": "Both",
+        "Availability": "Over-the-Counter (OTC)"
+      }
     },
-    "Anti-Diarrheal": {
-      "Description": "Slows intestinal movement to control diarrhea.",
-      "Medicine": "Imodium (Loperamide)",
-      "Form": "Tablet",
-      "Dosage": "2 mg initial; 1 mg per loose stool",
-      "Frequency": "As needed",
-      "Maximum": "8 mg per day",
-      "Notes": "Reduces diarrhea symptoms effectively.",
-      "Alternatives": "Generic Loperamide",
-      "Preparation": "Oral",
-      "QuantityNeeded": "Dosage as specified",
-      "AgeGroup": "All",
-      "Sex": "Both",
-      "Availability": "OTC"
-    }
-  },
-  "Herbal": {
-    "Ginger Tea": {
-      "Description": "Soothes nausea and indigestion; supports overall digestive comfort.",
-      "Medicine": "Ginger Tea",
-      "Form": "Tea",
-      "Dosage": "1 cup per serving",
-      "Frequency": "2-3 times daily",
-      "Maximum": "N/A",
-      "Notes": "Widely used and active for digestive relief.",
-      "Alternatives": "Peppermint tea, Chamomile tea",
-      "Preparation": "Steep 1-2 tsp grated ginger in boiling water for 10 minutes",
-      "QuantityNeeded": "1 cup per serving",
-      "AgeGroup": "All",
-      "Sex": "Both",
-      "Availability": "OTC"
+    "Herbal": {
+      "Ginger Tea": {
+        "Description": "A herbal tea that soothes nausea and supports overall digestive comfort.",
+        "Medicine": "Ginger Tea",
+        "Form": "Brewed Tea",
+        "Dosage": "1 cup per serving",
+        "Frequency": "2-3 times daily",
+        "Maximum": "Not applicable",
+        "Notes": "Widely used for its natural digestive relief properties.",
+        "Alternatives": "Peppermint tea, Chamomile tea",
+        "Preparation": "Steep 1-2 teaspoons of grated ginger in boiling water for 10 minutes",
+        "QuantityNeeded": "1 cup per serving",
+        "AgeGroup": "All",
+        "Sex": "Both",
+        "Availability": "Over-the-Counter (OTC) / Home remedy"
         }
       }
     },
